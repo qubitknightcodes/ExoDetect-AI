@@ -1,43 +1,34 @@
-"""
-Transit analysis utilities.
-
-Author: ExoDetect-AI
-"""
-
-from __future__ import annotations
-
 import numpy as np
 
 
 class TransitAnalyzer:
-    """
-    Extract basic transit parameters from a phase-folded light curve.
-    """
 
-    def analyze(self, phase: np.ndarray, flux: np.ndarray):
+    def analyze(self, phase, flux):
 
         phase = np.asarray(phase)
         flux = np.asarray(flux)
 
-        median_flux = np.median(flux)
+        baseline = np.median(flux)
 
-        min_idx = np.argmin(flux)
+        min_flux = np.min(flux)
 
-        transit_center = phase[min_idx]
+        depth = baseline - min_flux
 
-        transit_depth = median_flux - flux[min_idx]
+        idx = np.argmin(flux)
 
-        threshold = median_flux - transit_depth / 2
+        center = phase[idx]
 
-        in_transit = flux < threshold
+        threshold = baseline - depth / 2
 
-        if np.any(in_transit):
-            duration = phase[in_transit].max() - phase[in_transit].min()
+        mask = flux < threshold
+
+        if np.sum(mask) > 1:
+            duration = np.ptp(phase[mask])
         else:
             duration = 0.0
 
         return {
-            "transit_depth": float(transit_depth),
+            "transit_depth": float(depth),
             "transit_duration": float(duration),
-            "transit_center": float(transit_center),
+            "transit_center": float(center),
         }

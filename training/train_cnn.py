@@ -1,3 +1,9 @@
+import sys
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parent.parent
+sys.path.append(str(ROOT))
+
 from models.cnn_model import build_cnn
 from training.callbacks import get_callbacks
 from training.trainer import prepare_data
@@ -26,3 +32,11 @@ loss, accuracy = model.evaluate(
 )
 
 print(f"Test Accuracy: {accuracy:.4f}")
+
+from evaluation.evaluate import evaluate_model
+
+evaluate_model(
+    model,
+    X_test,
+    y_test
+)
