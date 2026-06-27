@@ -58,41 +58,22 @@ ExoDetect-AI aims to automate this workflow by combining established astronomica
 
 # Application Preview
 
-> Replace the placeholder images below with screenshots from your application.
 
 ## Home Screen
 
-```
-screenshots/home.png
-```
-
-```markdown
 ![Home](screenshots/home.png)
-```
 
 ---
 
 ## Light Curve Visualization
 
-```
-screenshots/lightcurve.png
-```
-
-```markdown
 ![Light Curve](screenshots/lightcurve.png)
-```
 
 ---
 
 ## Detection Results
 
-```
-screenshots/result.png
-```
-
-```markdown
 ![Results](screenshots/result.png)
-```
 
 ---
 
