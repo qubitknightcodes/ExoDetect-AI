@@ -1,12 +1,10 @@
 joblib
-xgboost
 astropy>=6.0
 numpy
 pandas
 matplotlib
 scipy
 scikit-learn
-tensorflow
 astropy
 lightkurve
 streamlit
