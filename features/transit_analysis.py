@@ -10,9 +10,11 @@ class TransitAnalyzer:
 
         baseline = np.median(flux)
 
-        min_flux = np.min(flux)
+        sorted_flux = np.sort(flux)
 
-        depth = baseline - min_flux
+        n = max(5, len(sorted_flux) // 100)
+
+        depth = baseline - np.mean(sorted_flux[:n])
 
         idx = np.argmin(flux)
 

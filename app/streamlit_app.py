@@ -71,10 +71,30 @@ if uploaded:
 
     st.header("🔍 Detection Result")
 
-    if result["confidence"] > 0.90:
+        # Decision logic
+    if (
+        result["snr"] >= 6
+        and result["transit_depth"] < 0.05
+        and result["bls_power"] > 0.05
+    ):
+        prediction = "Planet Candidate"
+
+    elif (
+        result["snr"] >= 3
+        and result["transit_depth"] < 0.05
+    ):
+        prediction = "Possible Transit"
+
+    else:
+        prediction = "No Significant Transit"
+
+        # Display prediction
+    if prediction == "Planet Candidate":
         st.success("🟢 **Strong Transit Candidate Detected**")
-    elif result["confidence"] > 0.70:
+
+    elif prediction == "Possible Transit":
         st.warning("🟡 **Possible Transit Candidate Detected**")
+
     else:
         st.error("🔴 **No Significant Transit Signal Detected**")
 
@@ -141,29 +161,33 @@ if uploaded:
 
     st.subheader("Scientific Interpretation")
 
-    if result["confidence"] > 0.90:
+    if prediction == "Planet Candidate":
         st.success("""
     ### Strong Transit Candidate
 
-    A clear periodic transit-like signal was detected in the uploaded TESS light curve.
+    A statistically significant periodic transit-like signal has been identified in the uploaded TESS light curve.
 
-    The recovered orbital period is consistent with a stable repeating event. Based on the current analysis, this object represents a promising exoplanet candidate that would merit further astrophysical validation.
+    The recovered orbital period, transit depth and signal-to-noise ratio are consistent with a potential exoplanet transit. While additional astrophysical validation would be required, this target represents a promising exoplanet candidate.
     """)
 
-    elif result["confidence"] > 0.70:
+    elif prediction == "Possible Transit":
         st.warning("""
     ### Possible Transit Candidate
 
-    A periodic signal was identified, but additional observations and validation would be required to confirm its origin.
+    A periodic dimming event has been detected, although the recovered signal is of moderate significance.
+
+    Further observations and additional validation would be recommended before interpreting this signal as a planetary transit.
     """)
 
     else:
         st.error("""
     ### No Significant Transit Detected
 
-    The current light curve does not contain a sufficiently strong periodic transit signal according to the implemented detection pipeline.
-    """)
+    No convincing periodic transit signature was identified in the uploaded light curve.
 
+    The observed variations are more consistent with stellar variability, instrumental noise, or other non-transit effects than with a detectable exoplanet transit.
+    """)
+        
     st.info("""
     **Note**
 
