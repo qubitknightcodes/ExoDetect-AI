@@ -1,5 +1,6 @@
 import sys
 from pathlib import Path
+from PIL import Image
 
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.append(str(ROOT))
@@ -20,6 +21,7 @@ st.set_page_config(
 )
 
 st.title("🪐 ExoDetect-AI")
+st.caption("Developed by Team MYTHOS 2.0")
 
 st.markdown("""
 ### Detecting Exoplanets from TESS Light Curves
@@ -29,10 +31,22 @@ signals, estimate orbital parameters, and visualize potential
 exoplanet candidates through an automated analysis pipeline.
 """)
 
+logo = Image.open("assets/mythos_logo.png")
+
+left, center, right = st.sidebar.columns([0.5, 2, 0.5])
+
+with center:
+    st.image(logo, width=140)
+
+st.sidebar.markdown(
+    "<h3 style='text-align:right;'>Team MYTHOS 2.0</h3>",
+    unsafe_allow_html=True
+)
+
 st.sidebar.header("About ExoDetect-AI")
 
 st.sidebar.markdown("""
-ExoDetect-AI is a scientific pipeline developed for the **Bharatiya Antariksh Hackathon 2026**.
+ExoDetect-AI is a scientific pipeline developed for the **Bharatiya Antariksh Hackathon 2026** by Team MYTHOS 2.0.
 
 ### Pipeline
 
@@ -46,22 +60,47 @@ ExoDetect-AI is a scientific pipeline developed for the **Bharatiya Antariksh Ha
 Upload a TESS FITS file to begin the analysis.
 """)
 
+st.subheader("🧪 Try Example Datasets")
+
+st.caption(
+    "Don't have a FITS file? Select one of the built-in examples."
+)
+
+col1, col2 = st.columns(2)
+
+with col1:
+    example_planet = st.button("🟢 Example: Pi Mensae")
+
+with col2:
+    example_no_planet = st.button("🔴 Example: Vega")
+
+example_path = None
+
+if example_planet:
+    example_path = "examples/Pi_Mensae.fits"
+
+if example_no_planet:
+    example_path = "examples/vega_no_transit.fits"
+
 uploaded = st.file_uploader(
     "Upload a TESS FITS file",
     type=["fits"],
 )
 
-if uploaded:
+if uploaded or example_path:
 
     with st.spinner("Analyzing light curve..."):
+        if uploaded:
+            with tempfile.NamedTemporaryFile(
+                delete=False,
+                suffix=".fits"
+            ) as temp:
 
-        with tempfile.NamedTemporaryFile(
-            delete=False,
-            suffix=".fits"
-        ) as temp:
+                temp.write(uploaded.read())
+                path = temp.name
 
-            temp.write(uploaded.read())
-            path = temp.name
+        else:
+            path = example_path
 
         loader = FITSLoader()
         detector = Detector()
@@ -97,6 +136,11 @@ if uploaded:
 
     else:
         st.error("🔴 **No Significant Transit Signal Detected**")
+
+    if uploaded:
+        st.info(f"📂 Dataset: {uploaded.name}")
+    else:
+        st.info(f"📂 Dataset: {Path(path).name}")
 
     fig = plt.figure(figsize=(12,4))
     plt.plot(
@@ -220,7 +264,12 @@ if uploaded:
 
         st.markdown("---")
 
+        col1, col2 = st.columns([4, 4])
+
+    with col1:
+        st.image(logo, width=90)
+
+    with col2:
         st.caption(
-        "ExoDetect-AI • Developed for Bharatiya Antariksh Hackathon 2026 • "
-        "Transit detection using TESS light curves"
-    )
+            "Developed by Team MYTHOS 2.0 " 
+        )  
